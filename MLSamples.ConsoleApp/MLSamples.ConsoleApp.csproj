@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MLSamples.Core\MLSamples.Core.csproj" />
+  </ItemGroup>
+
 </Project>
