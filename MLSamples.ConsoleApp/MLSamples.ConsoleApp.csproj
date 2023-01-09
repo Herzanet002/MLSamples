@@ -8,7 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MLSamples.Core\MLSamples.Core.csproj" />
+    <ProjectReference Include="..\MLSamples.Application\MLSamples.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Data\water_quality.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\water_potability.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\wheat_clustering.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
