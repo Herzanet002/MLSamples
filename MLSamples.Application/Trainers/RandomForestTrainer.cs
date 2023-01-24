@@ -11,7 +11,7 @@ public class RandomForestTrainer : TrainerBase<FastForestBinaryModelParameters>
 {
 	public RandomForestTrainer(int numberOfLeaves, int numberOfTrees)
 	{
-		Name = $"Random Forest: {numberOfLeaves}-{numberOfTrees}";
+		Name = $"Random Forest: Leaves - {numberOfLeaves}, Trees - {numberOfTrees}";
 		Model = MlContext.BinaryClassification.Trainers.FastForest(
 			numberOfLeaves: numberOfLeaves,
 			numberOfTrees: numberOfTrees);
