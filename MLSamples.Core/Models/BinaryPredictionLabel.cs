@@ -2,5 +2,5 @@
 
 public record BinaryPredictionLabel
 {
-	public bool PredictedLabel { get; init; }
+    public bool PredictedLabel { get; init; }
 }

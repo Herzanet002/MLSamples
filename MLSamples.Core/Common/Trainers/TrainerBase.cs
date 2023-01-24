@@ -6,35 +6,35 @@ namespace MLSamples.Core.Common.Trainers;
 
 public abstract class TrainerBase<T> : ITrainerBase where T : class
 {
-	protected readonly MLContext MlContext;
-	protected DataOperationsCatalog.TrainTestData DataSplit;
-	protected ITrainerEstimator<SingleFeaturePredictionTransformerBase<T>, T> Model;
-	protected ITransformer TrainedModel;
+    protected readonly MLContext MlContext;
+    protected DataOperationsCatalog.TrainTestData DataSplit;
+    protected ITrainerEstimator<SingleFeaturePredictionTransformerBase<T>, T> Model;
+    protected ITransformer TrainedModel;
 
-	protected TrainerBase()
-	{
-		MlContext = new MLContext(0);
-	}
+    protected TrainerBase()
+    {
+        MlContext = new MLContext(0);
+    }
 
-	public string Name { get; init; }
+    public string Name { get; init; }
 
-	public ITransformer Fit(string trainingFileName)
-	{
-		if (!File.Exists(trainingFileName)) throw new FileNotFoundException($"File {trainingFileName} doesn't exist.");
+    public ITransformer Fit(string trainingFileName)
+    {
+        if (!File.Exists(trainingFileName)) throw new FileNotFoundException($"File {trainingFileName} doesn't exist.");
 
-		DataSplit = LoadAndPrepareData(trainingFileName);
-		var dataProcessPipeline = BuildDataProcessingPipeline();
-		var trainingPipeline = dataProcessPipeline.Append(Model);
+        DataSplit = LoadAndPrepareData(trainingFileName);
+        var dataProcessPipeline = BuildDataProcessingPipeline();
+        var trainingPipeline = dataProcessPipeline.Append(Model);
 
-		TrainedModel = trainingPipeline.Fit(DataSplit.TrainSet);
-		return TrainedModel;
-	}
+        TrainedModel = trainingPipeline.Fit(DataSplit.TrainSet);
+        return TrainedModel;
+    }
 
-	public void Save(string pathToSave)
-	{
-		MlContext.Model.Save(TrainedModel, DataSplit.TrainSet.Schema, pathToSave);
-	}
+    public void Save(string pathToSave)
+    {
+        MlContext.Model.Save(TrainedModel, DataSplit.TrainSet.Schema, pathToSave);
+    }
 
-	protected abstract DataOperationsCatalog.TrainTestData LoadAndPrepareData(string trainingFileName);
-	protected abstract IEstimator<ITransformer> BuildDataProcessingPipeline();
+    protected abstract DataOperationsCatalog.TrainTestData LoadAndPrepareData(string trainingFileName);
+    protected abstract IEstimator<ITransformer> BuildDataProcessingPipeline();
 }

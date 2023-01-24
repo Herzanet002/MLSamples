@@ -1,9 +1,8 @@
-﻿using MLSamples.Application.Trainers;
+﻿using System.Text;
+using MLSamples.Application.Trainers;
+using MLSamples.ConsoleApp.Helpers.Console;
 using MLSamples.Core.Common.Predictors;
 using MLSamples.Core.Models;
-using System.Text;
-using MLSamples.ConsoleApp.Helpers.Console;
-
 
 var binaryClassificationDataPath = Path.Combine(Environment.CurrentDirectory, "Data", "water_quality.csv");
 var clusteringDataPath = Path.Combine(Environment.CurrentDirectory, "Data", "wheat_clustering.csv");
@@ -14,9 +13,8 @@ var clusteringModelPath = Path.Combine(Environment.CurrentDirectory, "Data", "Wh
 do
 {
     ConsoleMessageHelper.DisplayWelcomeMessage();
-    var chose = ConsoleFormatterHelper.ReadLineTrimmed();
+    var chose = ConsoleInputHelper.ReadLineTrimmed();
     ResolveLearningMethodByMode(chose);
-
 } while (true);
 
 void ResolveLearningMethodByMode(string? mode)
@@ -26,7 +24,7 @@ void ResolveLearningMethodByMode(string? mode)
         case "1":
             RunKMeansTraining();
             break;
-            
+
         case "2":
             RunRandomForestTraining();
             break;
@@ -57,60 +55,58 @@ void RunRandomForestTraining()
 
     void EvaluatePredict(RandomForestTrainer trainer, WaterModel testSample)
     {
-        var sb = new StringBuilder();
-        sb.AppendLine("---------------------------------------------")
+        var outputBuilder = new StringBuilder();
+        outputBuilder.AppendLine("---------------------------------------------")
             .AppendLine($"{trainer.Name}")
             .AppendLine("---------------------------------------------");
-        Console.WriteLine(sb);
-        sb.Clear();
+        Console.WriteLine(outputBuilder);
+        outputBuilder.Clear();
 
         trainer.Fit(binaryClassificationDataPath);
 
         var modelMetrics = trainer.Evaluate();
-        
-        sb.AppendLine($"Accuracy: {modelMetrics.Accuracy:f}")
+
+        outputBuilder.AppendLine($"Accuracy: {modelMetrics.Accuracy:f}")
             .AppendLine($"F1 Score: {modelMetrics.F1Score:f}")
             .AppendLine($"Positive Precision: {modelMetrics.PositivePrecision:f}")
             .AppendLine($"Negative Precision: {modelMetrics.NegativePrecision:f}")
             .AppendLine($"Positive Recall: {modelMetrics.PositiveRecall:f}")
             .AppendLine($"Negative Recall: {modelMetrics.NegativeRecall:f}")
             .AppendLine($"Area Under Precision Recall Curve: {modelMetrics.AreaUnderPrecisionRecallCurve:f}");
-        Console.WriteLine(sb);
-        sb.Clear();
+        Console.WriteLine(outputBuilder);
+        outputBuilder.Clear();
 
         trainer.Save(binaryClassificationModelPath);
 
         var predictor = new Predictor<WaterModel, BinaryPredictionLabel>(binaryClassificationModelPath);
         var prediction = predictor.Predict(testSample);
 
-        sb.AppendLine("------------------------------")
-            .AppendLine($"Prediction: {prediction.PredictedLabel}\n")
+        outputBuilder.AppendLine("------------------------------")
+            .AppendLine($"Prediction: {prediction.PredictedLabel}")
             .AppendLine("------------------------------");
-        Console.WriteLine(sb);
-        
+        Console.WriteLine(outputBuilder);
     }
 }
 
 void RunKMeansTraining()
 {
     var trainer = new KMeansTrainer(3);
-    var sb = new StringBuilder();
-    sb.AppendLine("*******************************")
+    var outputBuilder = new StringBuilder();
+    outputBuilder.AppendLine("*******************************")
         .AppendLine($"{trainer.Name}")
         .AppendLine("*******************************");
-    Console.WriteLine(sb);
-    sb.Clear();
+    Console.WriteLine(outputBuilder);
+    outputBuilder.Clear();
 
     trainer.Fit(clusteringDataPath);
 
     var modelMetrics = trainer.Evaluate();
-    
 
-    sb.AppendLine($"AverageDistance: {modelMetrics.AverageDistance:f}")
+    outputBuilder.AppendLine($"AverageDistance: {modelMetrics.AverageDistance:f}")
         .AppendLine($"DaviesBouldinIndex: {modelMetrics.DaviesBouldinIndex:f}")
         .AppendLine($"NormalizedMutualInformation: {modelMetrics.NormalizedMutualInformation:f}");
 
-    Console.WriteLine(sb);
+    Console.WriteLine(outputBuilder);
     trainer.Save(clusteringModelPath);
 
     var predictor = new Predictor<WheatModel, ClusterPredictionModel>(clusteringModelPath);
@@ -126,9 +122,9 @@ void RunKMeansTraining()
         KernelGrooveLength = 6f
     };
     var prediction = predictor.Predict(pink);
-    sb.Clear();
-    sb.AppendLine($"Кластер: {prediction.PredictedClusterId}")
+    outputBuilder.Clear();
+    outputBuilder.AppendLine($"Кластер: {prediction.PredictedClusterId}")
         .AppendLine($"Сорт: {WheatVarieties.GetVarietyByCluster(prediction.PredictedClusterId)}")
         .AppendLine($"Расстояния: {string.Join(" ", prediction.Distances!)}");
-    Console.WriteLine(sb);
+    Console.WriteLine(outputBuilder);
 }

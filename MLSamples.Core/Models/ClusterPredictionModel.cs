@@ -4,7 +4,7 @@ namespace MLSamples.Core.Models;
 
 public sealed class ClusterPredictionModel
 {
-	[ColumnName("Score")] public float[]? Distances;
+    [ColumnName("Score")] public float[]? Distances;
 
-	[ColumnName("PredictedLabel")] public uint PredictedClusterId;
+    [ColumnName("PredictedLabel")] public uint PredictedClusterId;
 }
